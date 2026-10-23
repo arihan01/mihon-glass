@@ -1,8 +1,10 @@
 package tachiyomi.presentation.core.components.material
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ScaffoldDefaults
@@ -23,6 +25,8 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import dev.chrisbanes.haze.hazeSource
+import dev.chrisbanes.haze.rememberHazeState
 
 @Composable
 fun Scaffold(
@@ -42,14 +46,16 @@ fun Scaffold(
 ) {
     var fabHeight by remember { mutableIntStateOf(0) }
     val density = LocalDensity.current
+    val floatingBarPadding = LocalFloatingBarPadding.current
+    val hazeState = rememberHazeState()
 
     androidx.compose.material3.Scaffold(
         modifier = modifier.nestedScroll(topBarScrollBehavior.nestedScrollConnection),
-        topBar = { topBar(topBarScrollBehavior) },
+        topBar = { Column(Modifier.glassHeader(hazeState)) { topBar(topBarScrollBehavior) } },
         bottomBar = bottomBar,
-        snackbarHost = snackbarHost,
+        snackbarHost = { Box(Modifier.padding(bottom = floatingBarPadding)) { snackbarHost() } },
         floatingActionButton = {
-            Box(Modifier.onSizeChanged { fabHeight = it.height }) {
+            Box(Modifier.padding(bottom = floatingBarPadding).onSizeChanged { fabHeight = it.height }) {
                 floatingActionButton()
             }
         },
@@ -58,12 +64,14 @@ fun Scaffold(
         contentColor = contentColor,
         contentWindowInsets = contentWindowInsets,
     ) { contentPadding ->
-        val paddingValues = remember(contentPadding) {
+        val paddingValues = remember(contentPadding, floatingBarPadding) {
             FabAwarePaddingValues(contentPadding) {
-                if (fabHeight == 0) 0.dp else with(density) { fabHeight.toDp() } + FabSpacing
+                if (fabHeight == 0) floatingBarPadding else with(density) { fabHeight.toDp() } + FabSpacing
             }
         }
-        content(paddingValues)
+        Box(Modifier.hazeSource(hazeState)) {
+            content(paddingValues)
+        }
     }
 }
 

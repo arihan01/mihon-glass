@@ -5,6 +5,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.PrimaryScrollableTabRow
 import androidx.compose.material3.Tab
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import eu.kanade.presentation.category.visualName
 import tachiyomi.domain.category.model.Category
@@ -21,6 +22,8 @@ internal fun LibraryTabs(
     PrimaryScrollableTabRow(
         selectedTabIndex = currentPageIndex,
         edgePadding = 0.dp,
+        containerColor = Color.Transparent,
+        divider = {},
     ) {
         categories.forEachIndexed { index, category ->
             Tab(

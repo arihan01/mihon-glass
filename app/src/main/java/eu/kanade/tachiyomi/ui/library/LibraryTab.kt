@@ -6,11 +6,13 @@ import androidx.compose.animation.graphics.res.animatedVectorResource
 import androidx.compose.animation.graphics.res.rememberAnimatedVectorPainter
 import androidx.compose.animation.graphics.vector.AnimatedImageVector
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
@@ -30,6 +32,7 @@ import eu.kanade.presentation.category.components.ChangeCategoryDialog
 import eu.kanade.presentation.library.DeleteLibraryMangaDialog
 import eu.kanade.presentation.library.LibrarySettingsDialog
 import eu.kanade.presentation.library.components.LibraryContent
+import eu.kanade.presentation.library.components.LibraryTabs
 import eu.kanade.presentation.library.components.LibraryToolbar
 import eu.kanade.presentation.manga.components.LibraryBottomActionMenu
 import eu.kanade.presentation.more.onboarding.GETTING_STARTED_URL
@@ -106,6 +109,16 @@ data object LibraryTab : Tab {
             started
         }
 
+        val categories = state.displayedCategories
+        // Recreated once loading finishes so it starts on the persisted category
+        val pagerState = key(state.isLoading) {
+            rememberPagerState(state.coercedActiveCategoryIndex) { state.displayedCategories.size }
+        }
+        val showCategoryTabs = !state.isLoading &&
+            (state.showCategoryTabs || !state.searchQuery.isNullOrEmpty()) &&
+            categories.isNotEmpty() &&
+            (categories.size > 1 || !categories.first().isSystemCategory)
+
         Scaffold(
             topBar = { scrollBehavior ->
                 val title = state.getToolbarTitle(
@@ -140,6 +153,14 @@ data object LibraryTab : Tab {
                     // For scroll overlay when no tab
                     scrollBehavior = scrollBehavior.takeIf { !state.showCategoryTabs },
                 )
+                if (showCategoryTabs) {
+                    LibraryTabs(
+                        categories = categories,
+                        pagerState = pagerState,
+                        getItemCountForCategory = { state.getItemCountForCategory(it) },
+                        onTabItemClick = { scope.launch { pagerState.animateScrollToPage(it) } },
+                    )
+                }
             },
             bottomBar = {
                 LibraryBottomActionMenu(
@@ -183,9 +204,8 @@ data object LibraryTab : Tab {
                         searchQuery = state.searchQuery,
                         selection = state.selection,
                         contentPadding = contentPadding,
-                        currentPage = state.coercedActiveCategoryIndex,
+                        pagerState = pagerState,
                         hasActiveFilters = state.hasActiveFilters,
-                        showPageTabs = state.showCategoryTabs || !state.searchQuery.isNullOrEmpty(),
                         onChangeCurrentPage = viewModel::updateActiveCategoryIndex,
                         onClickManga = { navigator.push(MangaScreen(it)) },
                         onContinueReadingClicked = { it: LibraryManga ->
@@ -210,7 +230,6 @@ data object LibraryTab : Tab {
                         onGlobalSearchClicked = {
                             navigator.push(GlobalSearchScreen(viewModel.state.value.searchQuery ?: ""))
                         },
-                        getItemCountForCategory = { state.getItemCountForCategory(it) },
                         getDisplayMode = { viewModel.getDisplayMode() },
                         getColumnsForOrientation = { viewModel.getColumnsForOrientation(it) },
                         getItemsForCategory = { state.getItemsForCategory(it) },

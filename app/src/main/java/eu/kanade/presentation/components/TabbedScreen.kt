@@ -2,10 +2,7 @@ package eu.kanade.presentation.components
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.calculateEndPadding
-import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
@@ -19,8 +16,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalLayoutDirection
-import androidx.compose.ui.zIndex
+import androidx.compose.ui.graphics.Color
 import dev.icerock.moko.resources.StringResource
 import kotlinx.coroutines.launch
 import tachiyomi.presentation.core.components.material.Scaffold
@@ -43,47 +39,38 @@ fun TabbedScreen(
             val tab = tabs[state.currentPage]
             val searchEnabled = tab.searchEnabled
 
-            SearchToolbar(
-                titleContent = { AppBarTitle(stringResource(titleRes)) },
-                searchEnabled = searchEnabled,
-                searchQuery = if (searchEnabled) searchQuery else null,
-                onChangeSearchQuery = onChangeSearchQuery,
-                actions = { AppBarActions(tab.actions) },
-            )
+            Column {
+                SearchToolbar(
+                    titleContent = { AppBarTitle(stringResource(titleRes)) },
+                    searchEnabled = searchEnabled,
+                    searchQuery = if (searchEnabled) searchQuery else null,
+                    onChangeSearchQuery = onChangeSearchQuery,
+                    actions = { AppBarActions(tab.actions) },
+                )
+                PrimaryTabRow(
+                    selectedTabIndex = state.currentPage,
+                    containerColor = Color.Transparent,
+                    divider = {},
+                ) {
+                    tabs.forEachIndexed { index, tab ->
+                        Tab(
+                            selected = state.currentPage == index,
+                            onClick = { scope.launch { state.animateScrollToPage(index) } },
+                            text = { TabText(text = stringResource(tab.titleRes), badgeCount = tab.badgeNumber) },
+                            unselectedContentColor = MaterialTheme.colorScheme.onSurface,
+                        )
+                    }
+                }
+            }
         },
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
     ) { contentPadding ->
-        Column(
-            modifier = Modifier.padding(
-                top = contentPadding.calculateTopPadding(),
-                start = contentPadding.calculateStartPadding(LocalLayoutDirection.current),
-                end = contentPadding.calculateEndPadding(LocalLayoutDirection.current),
-            ),
-        ) {
-            PrimaryTabRow(
-                selectedTabIndex = state.currentPage,
-                modifier = Modifier.zIndex(1f),
-            ) {
-                tabs.forEachIndexed { index, tab ->
-                    Tab(
-                        selected = state.currentPage == index,
-                        onClick = { scope.launch { state.animateScrollToPage(index) } },
-                        text = { TabText(text = stringResource(tab.titleRes), badgeCount = tab.badgeNumber) },
-                        unselectedContentColor = MaterialTheme.colorScheme.onSurface,
-                    )
-                }
-            }
-
-            HorizontalPager(
-                modifier = Modifier.fillMaxSize(),
-                state = state,
-                verticalAlignment = Alignment.Top,
-            ) { page ->
-                tabs[page].content(
-                    PaddingValues(bottom = contentPadding.calculateBottomPadding()),
-                    snackbarHostState,
-                )
-            }
+        HorizontalPager(
+            modifier = Modifier.fillMaxSize(),
+            state = state,
+            verticalAlignment = Alignment.Top,
+        ) { page ->
+            tabs[page].content(contentPadding, snackbarHostState)
         }
     }
 }

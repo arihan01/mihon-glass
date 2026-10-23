@@ -41,6 +41,7 @@ diskLruCache = "2.0.2"
 firebase-bom = "35.1.0"
 firebase-crashlytics = "3.0.8"
 google-services = "4.5.0"
+haze = "2.0.1"
 image-decoder = "17"
 injekt = "1.16.1"
 jsoup = "1.23.2"
@@ -55,7 +56,6 @@ leakCanary = "2.14"
 logcat = "0.4"
 markdown = "0.46.0"
 material = "1.14.0"
-materialKolor = "5.0.1"
 metro = "1.4.5"
 mockk = "1.14.11"
 moko-resources = "0.26.4"
@@ -140,6 +140,8 @@ diskLruCache = { module = "com.jakewharton:disklrucache", version.ref = "diskLru
 firebase-analytics = { module = "com.google.firebase:firebase-analytics" }
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebase-bom" }
 firebase-crashlytics = { module = "com.google.firebase:firebase-crashlytics" }
+haze-blur = { module = "dev.chrisbanes.haze:haze-blur", version.ref = "haze" }
+haze-blurMaterials = { module = "dev.chrisbanes.haze:haze-blur-materials", version.ref = "haze" }
 image-decoder = { module = "ca.mpreg:imagedecoder", version.ref = "image-decoder" }
 injekt = { module = "uy.kohesive.injekt:injekt-core", version.ref = "injekt" }
 jsoup = { module = "org.jsoup:jsoup", version.ref = "jsoup" }
@@ -164,7 +166,6 @@ logcat = { module = "com.squareup.logcat:logcat", version.ref = "logcat" }
 markdown-coil = { module = "com.mikepenz:multiplatform-markdown-renderer-coil3", version.ref = "markdown" }
 markdown-core = { module = "com.mikepenz:multiplatform-markdown-renderer", version.ref = "markdown" }
 material = { module = "com.google.android.material:material", version.ref = "material" }
-materialKolor = { module = "com.materialkolor:material-kolor", version.ref = "materialKolor" }
 metro-runtime = { module = "dev.zacsweers.metro:runtime", version.ref = "metro" }
 metrox-viewmodel = { module = "dev.zacsweers.metro:metrox-viewmodel", version.ref = "metro" }
 metrox-viewmodel-compose = { module = "dev.zacsweers.metro:metrox-viewmodel-compose", version.ref = "metro" }

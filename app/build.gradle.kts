@@ -309,7 +309,6 @@ dependencies {
     implementation(libs.composeGrid)
     implementation(libs.reorderable)
     implementation(libs.bundles.markdown)
-    implementation(libs.materialKolor)
 
     // Logging
     implementation(libs.logcat)

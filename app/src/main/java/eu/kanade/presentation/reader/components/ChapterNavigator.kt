@@ -3,7 +3,6 @@ package eu.kanade.presentation.reader.components
 import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsDraggedAsState
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -22,7 +21,6 @@ import androidx.compose.material3.SliderState
 import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalSlider
 import androidx.compose.material3.rememberSliderState
-import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
@@ -49,6 +47,7 @@ import mihon.icons.materialsymbols.MaterialSymbols
 import mihon.icons.materialsymbols.rounded.SkipNext
 import mihon.icons.materialsymbols.rounded.SkipPrevious
 import tachiyomi.i18n.MR
+import tachiyomi.presentation.core.components.material.glassTint
 import tachiyomi.presentation.core.i18n.stringResource
 import kotlin.math.roundToInt
 
@@ -103,10 +102,8 @@ fun ChapterNavigator(
     val isTabletUi = isTabletUi()
     val mainAxisPadding = if (isTabletUi) 24.dp else 8.dp
 
-    // Match with toolbar background color set in ReaderActivity
-    val backgroundColor = MaterialTheme.colorScheme
-        .surfaceColorAtElevation(3.dp)
-        .copy(alpha = if (isSystemInDarkTheme()) 0.9f else 0.95f)
+    // Matches the reader bars' frostedScrim
+    val backgroundColor = glassTint().copy(alpha = 0.88f)
     val buttonColor = IconButtonDefaults.filledIconButtonColors(
         containerColor = backgroundColor,
         disabledContainerColor = backgroundColor,

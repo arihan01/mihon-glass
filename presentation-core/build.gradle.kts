@@ -41,4 +41,7 @@ dependencies {
 
     implementation(libs.androidx.paging.runtime)
     implementation(libs.androidx.paging.compose)
+
+    api(libs.haze.blur)
+    api(libs.haze.blurMaterials)
 }

@@ -10,7 +10,6 @@ import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -24,7 +23,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
@@ -32,11 +30,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.LayoutDirection
-import androidx.compose.ui.unit.dp
 import eu.kanade.presentation.reader.components.ChapterNavigator
 import eu.kanade.presentation.reader.components.ChapterNavigatorType
 import eu.kanade.tachiyomi.ui.reader.setting.ReaderOrientation
 import eu.kanade.tachiyomi.ui.reader.setting.ReadingMode
+import tachiyomi.presentation.core.components.material.frostedScrim
 import tachiyomi.presentation.core.components.material.padding
 
 private val readerBarsSlideAnimationSpec = tween<IntOffset>(200)
@@ -75,10 +73,6 @@ fun ReaderAppBars(
     onClickCropBorder: () -> Unit,
     onClickSettings: () -> Unit,
 ) {
-    val backgroundColor = MaterialTheme.colorScheme
-        .surfaceColorAtElevation(3.dp)
-        .copy(alpha = if (isSystemInDarkTheme()) 0.9f else 0.95f)
-
     Column(modifier = Modifier.fillMaxHeight()) {
         AnimatedVisibility(
             visible = visible,
@@ -87,7 +81,7 @@ fun ReaderAppBars(
         ) {
             ReaderTopBar(
                 modifier = Modifier
-                    .background(backgroundColor)
+                    .frostedScrim()
                     .clickable(onClick = onClickTopAppBar),
                 mangaTitle = mangaTitle,
                 chapterTitle = chapterTitle,
@@ -163,7 +157,7 @@ fun ReaderAppBars(
                 ReaderBottomBar(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .background(backgroundColor)
+                        .frostedScrim()
                         .padding(horizontal = MaterialTheme.padding.small)
                         .windowInsetsPadding(WindowInsets.navigationBars),
                     readingMode = readingMode,

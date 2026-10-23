@@ -1,6 +1,5 @@
 package eu.kanade.tachiyomi.ui.browse.source.browse
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -10,7 +9,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHost
@@ -128,9 +126,7 @@ data class BrowseSourceScreen(
         Scaffold(
             topBar = {
                 Column(
-                    modifier = Modifier
-                        .background(MaterialTheme.colorScheme.surface)
-                        .pointerInput(Unit) {},
+                    modifier = Modifier.pointerInput(Unit) {},
                 ) {
                     BrowseSourceToolbar(
                         searchQuery = state.toolbarQuery,
@@ -207,8 +203,6 @@ data class BrowseSourceScreen(
                             )
                         }
                     }
-
-                    HorizontalDivider()
                 }
             },
             snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
