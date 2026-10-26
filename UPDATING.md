@@ -40,31 +40,35 @@ Machines without the key can still make debug builds; only release builds need i
 
 Run all commands from the repository root.
 
-**1. Fetch the latest upstream changes and release tags**
+**1. Fetch the latest upstream changes**
 
 ```bash
-git fetch upstream --tags
+git fetch upstream
 ```
 
-**2. Rebase the redesign onto them**
+**2. Bring `main` up to date**
 
-Make sure you're on `glass` and `git status` shows no uncommitted changes. Then choose what to
-follow:
+Move the local `main` to match upstream, then push it to the fork. Both only move `main` forward,
+so no force is needed:
 
-- A release tag, for stable versions (recommended). List recent ones with
-  `git tag --sort=-creatordate | head`.
+```bash
+git branch -f main upstream/main
+git push origin main
+```
 
-  ```bash
-  git rebase v0.21.3
-  ```
+**3. Rebase the redesign onto it**
 
-- `upstream/main`, for the latest development work, which is less tested.
+Make sure you're on `glass` and `git status` shows no uncommitted changes. Then:
 
-  ```bash
-  git rebase upstream/main
-  ```
+```bash
+git rebase main
+```
 
-**3. Resolve conflicts, if any**
+`glass` follows upstream's `main`, not its release tags. Upstream tags releases on a separate
+branch, so rebasing onto a tag would also replay every upstream commit made since that branch split
+off, not just the redesign.
+
+**4. Resolve conflicts, if any**
 
 Fix the conflicting files, then `git add` them and run `git rebase --continue`. To give up and get
 back to where you started, run `git rebase --abort`.
@@ -79,7 +83,7 @@ Conflicts are most likely in the files the redesign changes:
 
 If upstream adds a new color theme or changes the theme picker, leave that part out.
 
-**4. Format, compile and run the contrast test**
+**5. Format, compile and run the contrast test**
 
 ```bash
 ./gradlew spotlessApply :app:compileDebugKotlin :app:testDebugUnitTest --tests '*TachiyomiColorSchemeContrastTest*'
@@ -87,7 +91,7 @@ If upstream adds a new color theme or changes the theme picker, leave that part 
 
 The contrast test checks that every color pairing in the theme still meets WCAG AA.
 
-**5. Push to the fork**
+**6. Push to the fork**
 
 A rebase rewrites the redesign commits, so a plain push is rejected. `--force-with-lease` replaces
 the branch only if nobody else has pushed to it in the meantime:
@@ -96,7 +100,7 @@ the branch only if nobody else has pushed to it in the meantime:
 git push --force-with-lease origin glass
 ```
 
-**6. Build the signed release APK**
+**7. Build the signed release APK**
 
 ```bash
 ./gradlew assembleRelease
@@ -108,7 +112,7 @@ the others are for other CPU types, and `app-universal-release.apk` works on any
 Local builds leave out telemetry and the in-app updater. Avoid `-Pdist=github` and `-Pdist=ci`: those
 turn the updater on, and it offers official Mihon APKs that can't install over this signature.
 
-**7. Install it on the phone**, as described below.
+**8. Install it on the phone**, as described below.
 
 ## Installing on a phone over wireless adb
 
@@ -164,7 +168,8 @@ more than one device is listed, add `-s <serial>` after `adb`, using the serial 
   uninstall it, install this APK, then restore the backup. Downloaded chapters live in the storage
   folder you chose and survive the uninstall. Extensions stay installed but need to be trusted again.
 - **`INSTALL_FAILED_VERSION_DOWNGRADE`**: the new APK has a lower version than the installed one,
-  usually after rebasing onto an older tag than the last build. Rebase onto a newer tag instead.
+  usually after rebasing onto an older upstream commit than the last build. Update `main` and
+  rebase again.
 - **`no devices/emulators found`**: Wireless debugging switches itself off after a reboot or a Wi-Fi
   change. Turn it back on and repeat steps 2 to 4.
 
